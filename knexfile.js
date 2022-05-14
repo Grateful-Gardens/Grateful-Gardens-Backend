@@ -1,3 +1,4 @@
+require('dotenv').config()
 // Update with your config settings.
 
 /**
@@ -8,9 +9,9 @@
   development: {
     client: 'postgresql',
     connection: {
-      database: 'hackathon_db',
-      user:     'postgres',
-      password: '1'
+      database: process.env.DATABASE,
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD
     }
   },
 

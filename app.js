@@ -1,3 +1,4 @@
+require('dotenv').config()
 const postRouter = require('./routes/postRouter')
 const userRouter = require('./routes/userRouter')
 

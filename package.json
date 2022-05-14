@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Grateful-Gardens/Grateful-Gardens-Backend#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "knex": "^2.0.0",
     "node": "^17.7.2",

@@ -1,5 +1,8 @@
 const { Pool } = require('pg')
 const pool = new Pool({
+    database: 'hackathon_db',
     user: 'jah',
-    password: 'nohacking'
+    password: '123'
 })
+
+module.exports = pool

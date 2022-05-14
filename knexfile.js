@@ -34,8 +34,8 @@
     client: 'postgresql',
     connection: {
       database: 'hackathon_db',
-      user:     'jah',
-      password: 'nohacking'
+      user:     'postgres',
+      password: '1'
     },
     pool: {
       min: 2,

@@ -51,12 +51,12 @@ async function deleteUser(req,res){
 
     if(!data){
         res.status(404).json({
-          message : `Could not find todo with id ${user_i}`
+          message : `Could not find user with id ${user_id}`
         })
       }
 
       try{
-          await Users.removed(user_id)
+          await Users.removeUser(user_id)
           return res.sendStatus(204)
       }catch(err){
           res.status(404).json({

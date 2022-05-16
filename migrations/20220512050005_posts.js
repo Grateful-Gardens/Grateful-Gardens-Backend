@@ -9,7 +9,7 @@ exports.up = function (knex) {
         table.string('image')
         table.string('description')
         table.timestamp('time_posted').defaultTo(knex.fn.now())
-        table.integer('user_id').notNullable().references('user_id').inTable('users').onDelete('cascade')
+        table.integer('user_id').notNullable().references('user_id').inTable('users')
     })
 };
 

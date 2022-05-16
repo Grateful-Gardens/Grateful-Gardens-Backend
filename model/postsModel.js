@@ -2,65 +2,52 @@ const pool = require('../db')
 
 class PostsModel {
     static async getAllPosts() {
-        const sql = `select * from posts`
-
+        const sql = `SELECT * FROM posts`
         const dbResult = await pool.query(sql);
-
         return dbResult.rows
     }
 
-    static async getAllOfUsersPost(user_id) {
-        const sql = `select * from posts where user_id = ($1)`;
+    static async createPost(data) {
+        const { hashtag, image, description, user_id } = data
+        const sql = `INSERT INTO posts (hashtag, image, description, user_id) VALUES ($1, $2, $3, $4) RETURNING *`;
+        const dbResult = await pool.query(sql, [hashtag, image, description, user_id])
+        return dbResult.rows
+    }
 
-        const dbResult = await pool.query(sql, [user_id])
+    static async deleteAPost(post_id) {
+        if (!post_id) throw new Error(`NO post with the id of: ${post_id}`)
+        const sql = `DELETE FROM posts WHERE post_id = ($1)`;
+        const dbResult = await pool.query(sql, [post_id])
+        return dbResult.rows[0]
+    }
 
+    // Change to getBookmarkedPosts()
+    static async getAllOfAUsersPost(post_id) {
+        const sql = `SELECT * FROM posts WHERE post_id = ($1)`;
+        const dbResult = await pool.query(sql, [post_id])
         return dbResult.rows[0]
     }
 
     static async findSpecificPost(post_id) {
-        const sql = `select * from posts where post_id = ($1)`;
-
+        const sql = `SELECT * FROM posts WHERE post_id = ($1)`;
         const dbResult = await pool.query(sql, [post_id])
-
         return dbResult.rows[0]
     }
-    static async findPostByHashTag(hashtag) {
-        const sql = `select * from posts where hashtag = ($1)`;
+    // static async findPostByHashTag(hashtag) {
+    //     const sql = `SELECT * FROM posts WHERE hashtag = ($1)`;
+    //     const dbResult = await pool.query(sql, [hashtag])
+    //     return dbResult.rows
+    // }
 
-        const dbResult = await pool.query(sql, [hashtag])
+    // static async updatePost(post_id, description) {
+    //     const sql = `UPDATE posts SET description = ($2) WHERE post_id = ($1)`;
+    //     const dbResult = await pool.query(sql, [post_id, description])
+    //     return dbResult.rows
+    // }
 
-        return dbResult.rows
-    }
 
-    static async updatePost(post_id, description) {
 
-        const sql = `Update posts set description =($2) where post_id = ($1)`;
 
-        const dbResult = await pool.query(sql, [post_id, description])
-
-        return dbResult.rows
-    }
-
-    static async createPost(hashtag, image, description, user_id) {
-        const sql = `insert into posts values ($1, $2, $3, $4) returning *`;
-
-        const dbResult = await pool.query(sql, [hashtag, image, description, user_id])
-
-        return dbResult.rows
-    }
-
-    static async deletePosts(post_id) {
-        if (!post_id) throw new Error(`NO post with the id of: ${post_id}`)
-
-        const sql = `Delete from posts where post_id = ($1)`;
-
-        const dbResult = await pool.query(sql, [post_id])
-
-        console.log(`Post by the id of: ${post_id} has been deleted!`)
-
-        return dbResult.rows[0]
-
-    }
 }
 
 module.exports = PostsModel

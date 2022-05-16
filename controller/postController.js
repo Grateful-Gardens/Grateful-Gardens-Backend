@@ -1,9 +1,8 @@
 const PostsModel = require('../model/postsModel')
 
-async function fetchPost(req, res) {
+async function fetchPosts(req, res) {
     try {
         const data = await PostsModel.getAllPosts()
-
         res.json({
             data
         })
@@ -14,7 +13,9 @@ async function fetchPost(req, res) {
         })
     }
 }
+
 async function createPost(req, res) {
+    const { hashtag, image, description, user_id } = req.body
     const postData = {
         hashtag,
         image,
@@ -37,19 +38,19 @@ async function createPost(req, res) {
         })
     }
 }
-async function deletePost(req, res) {
-    const post_id = req.params.id
 
+async function deleteAPost(req, res) {
+    const post_id = req.params.id
     const data = await PostsModel.findSpecificPost(post_id)
 
     if (!data) {
-        res.status(404).json({
-            message: `Couldn't find post`
+        return res.status(404).json({
+            message: `Post with id ${post_id} doesn't exist!`
         })
     }
     try {
-        await PostsModel.deletePosts(post_id)
-        return res.sendStatus(204)
+        await PostsModel.deleteAPost(post_id)
+        return res.send(`Deleted ${post_id}`).status(204)
     } catch (error) {
         res.status(404).json({
             message: error.message
@@ -85,7 +86,7 @@ async function updatePosts(req, res) {
 
     if (!post_id) {
         res.status(404).json({
-            message: `No post with the post id of: ${post_id}`
+            message: `No post with id: ${post_id}`
         })
     }
     try {
@@ -109,7 +110,7 @@ async function getAllOfUsersPost(req, res) {
         })
     }
     try {
-        const data = await PostsModel.getAllOfUsersPost(user_id)
+        const data = await PostsModel.getAllOfAUsersPost(user_id)
         res.status(200).json({
             data
         })
@@ -120,13 +121,11 @@ async function getAllOfUsersPost(req, res) {
     }
 }
 
-
-
 module.exports = {
-    fetchPost,
+    fetchPosts,
     createPost,
-    getAllOfUsersPost,
     updatePosts,
     hashTagPost,
-    deletePost
+    deleteAPost,
+    getAllOfUsersPost
 }

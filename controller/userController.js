@@ -1,22 +1,22 @@
 const Users = require('../model/userModel');
 
-async function fetchUsers(req,res){
-    try{
+async function fetchUsers(req, res) {
+    try {
         const data = await Users.findAllUsers()
-        
+
         res.json({
             data
         })
-    } catch(err){
+    } catch (err) {
         res.statusCode = 200;
         res.json({
-            message:err.message
+            message: err.message
         })
     }
 }
 
-async function createUser(req,res){
-    const userData ={
+async function createUser(req, res) {
+    const userData = {
         username,
         password,
         email,
@@ -27,148 +27,148 @@ async function createUser(req,res){
         display_name
     }
 
-    if(!userData){
+    if (!userData) {
         return res.status(400).json({
-            message : 'You have to enter text'
+            message: 'You have to enter text'
         })
     }
-    try{
+    try {
         const userInfo = await Users.createUser(userData)
         res.status(201).json({
-            data : userInfo
+            data: userInfo
         });
-    }catch(err){
+    } catch (err) {
         res.status(500).json({
-            message:err.message
+            message: err.message
         });
     }
 }
 
-async function deleteUser(req,res){
+async function deleteUser(req, res) {
     const user_id = req.params.id
 
     const data = await Users.getSpecificUser(user_id)
 
-    if(!data){
+    if (!data) {
         res.status(404).json({
-          message : `Could not find user with id ${user_id}`
+            message: `Could not find user with id ${user_id}`
         })
-      }
-
-      try{
-          await Users.removeUser(user_id)
-          return res.sendStatus(204)
-      }catch(err){
-          res.status(404).json({
-              message:err.message
-          })
-      }
     }
 
-    async function getUser(req,res){
-        const username = req.params.id
+    try {
+        await Users.removeUser(user_id)
+        return res.sendStatus(204)
+    } catch (err) {
+        res.status(404).json({
+            message: err.message
+        })
+    }
+}
 
-        if(!username){
-            res.status(400).json({
-                message: "No user exits by that username"
-              })
-        }
-        try{
-            const data = await Users.getUserName(username)
-            res.status(200).json({
-                data
-              })
-            }catch (err){
-              res.status(404).json({
-                message : err.message
-              })
-            }
-          }
+async function getUser(req, res) {
+    const username = req.params.id
 
-          async function updateUserName(req,res){
-              const username = req.params.id
-              const {newUsername} = req.body
+    if (!username) {
+        res.status(400).json({
+            message: "No user exits by that username"
+        })
+    }
+    try {
+        const data = await Users.getUserName(username)
+        res.status(200).json({
+            data
+        })
+    } catch (err) {
+        res.status(404).json({
+            message: err.message
+        })
+    }
+}
 
-              if(!username){
-                res.status(404).json({
-                    message: `No user by this username : ${username}`
-                  })
-              }
-            try{
-              const data = await Users.updateUserName(username,newUsername)
-              res.status(200).json({
-                  data
-              })
-          }catch(err){
-              res.status(404).json({
-                  message : err.message
-              })
-          }
-          }
+async function updateUserName(req, res) {
+    const username = req.params.id
+    const { newUsername } = req.body
 
-          async function updateBio(req,res){
-            const username = req.params.id
-            const {bioData} = req.body
+    if (!username) {
+        res.status(404).json({
+            message: `No user by this username : ${username}`
+        })
+    }
+    try {
+        const data = await Users.updateUserName(username, newUsername)
+        res.status(200).json({
+            data
+        })
+    } catch (err) {
+        res.status(404).json({
+            message: err.message
+        })
+    }
+}
 
-            if(!username){
-              res.status(404).json({
-                  message: `No user by this username : ${username}`
-                })
-            }
-          try{
-            const data = await Users.updateBio(username,bioData)
-            res.status(200).json({
-                data
-            })
-        }catch(err){
-            res.status(404).json({
-                message : err.message
-            })
-        }
-        }
+async function updateBio(req, res) {
+    const username = req.params.id
+    const { bioData } = req.body
 
-        async function updateFirstNameLastName(req,res){
-            const username = req.params.id
-            const updatedName = {first_name, last_name} = req.body
+    if (!username) {
+        res.status(404).json({
+            message: `No user by this username : ${username}`
+        })
+    }
+    try {
+        const data = await Users.updateBio(username, bioData)
+        res.status(200).json({
+            data
+        })
+    } catch (err) {
+        res.status(404).json({
+            message: err.message
+        })
+    }
+}
 
-            if(!username){
-              res.status(404).json({
-                  message: `No user by this username : ${username}`
-                })
-            }
-          try{
-            const data = await Users.updateFirstNameLastName(username,updatedName)
-            res.status(200).json({
-                data
-            })
-        }catch(err){
-            res.status(404).json({
-                message : err.message
-            })
-        }
-        }
+async function updateFirstNameLastName(req, res) {
+    const username = req.params.id
+    const updatedName = { first_name, last_name } = req.body
+
+    if (!username) {
+        res.status(404).json({
+            message: `No user by this username : ${username}`
+        })
+    }
+    try {
+        const data = await Users.updateFirstNameLastName(username, updatedName)
+        res.status(200).json({
+            data
+        })
+    } catch (err) {
+        res.status(404).json({
+            message: err.message
+        })
+    }
+}
 
 
-        async function updateDisplayName(req,res){
-            const username = req.params.id
-            const {displayName} = req.body
+async function updateDisplayName(req, res) {
+    const username = req.params.id
+    const { displayName } = req.body
 
-            if(!username){
-              res.status(404).json({
-                  message: `No user by this username : ${username}`
-                })
-            }
-          try{
-            const data = await Users.updateDisplayName(username,displayName)
-            res.status(200).json({
-                data
-            })
-        }catch(err){
-            res.status(404).json({
-                message : err.message
-            })
-        }
-        }
+    if (!username) {
+        res.status(404).json({
+            message: `No user by this username : ${username}`
+        })
+    }
+    try {
+        const data = await Users.updateDisplayName(username, displayName)
+        res.status(200).json({
+            data
+        })
+    } catch (err) {
+        res.status(404).json({
+            message: err.message
+        })
+    }
+}
 module.exports = {
     fetchUsers,
     createUser,

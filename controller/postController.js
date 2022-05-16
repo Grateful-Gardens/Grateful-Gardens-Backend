@@ -16,7 +16,6 @@ async function fetchPost(req, res) {
 }
 async function createPost(req, res) {
     const postData = {
-        post_id,
         hashtag,
         image,
         description,

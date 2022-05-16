@@ -1,3 +1,4 @@
+const { runInNewContext } = require('vm');
 const PostsModel = require('../model/postsModel')
 
 async function fetchPost(req,res){
@@ -15,24 +16,21 @@ async function fetchPost(req,res){
     }
 }
     async function createPost(req,res){
-        const postData = {
-            hashtag,
-            image,
-            description
-        }
+        const {hashtag,image,description,user_id} = req.body 
+    // req.body = postData
         if(!postData){
             return res.status(400).json({
                 message : 'You have to enter text'
             })
         }
         try {
-            const postInfo = await PostsModel.createPost(postData)
+            const postInfo = await PostsModel.createPost(hashtag,image,description,user_id)
             res.status(201).json({
                 data: postInfo
             });
         } catch (error) {
             res.status(500).json({
-                message:err.message
+                message:error.message
             })
         }
     }
@@ -47,11 +45,11 @@ async function fetchPost(req,res){
                 })
             }
             try {
-                await PostsModel.deletePost(post_id)
+                await PostsModel.deletePosts(post_id)
                 return res.sendStatus(204)
             } catch (error) {
                 res.status(404).json({
-                    message:err.message
+                    message:error.message
                 })
                 
             }
@@ -72,13 +70,13 @@ async function fetchPost(req,res){
             })
         } catch (error) {
             res.status(404).json({
-                message : err.message
+                message : error.message
               })
             }
         }
 
 
-        async function updatePostys(req,res){
+        async function updatePost(req,res){
             const post_id = req.params.id
             const {description} = req.body
 
@@ -125,7 +123,7 @@ module.exports ={
     fetchPost,
     createPost,
     getAllOfUsersPost,
-    updatePostys,
+    updatePost,
     hashTagPost,
     deletePost
 }

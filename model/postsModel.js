@@ -42,7 +42,7 @@ class PostsModel{
     }
 
     static async createPost(data){
-        const sql = `insert into posts (hashtag,image,description) values ($1) returning *`;
+        const sql = `insert into posts (post_id,hashtag,image,description,user_id) values ($1) returning *`;
     
         const dbResult = await pool.query(sql,[data])
 
@@ -52,7 +52,7 @@ class PostsModel{
     static async deletePosts(post_id){
         if(!post_id) throw new Error(`NO post with the id of: ${post_id}`)
         
-        const sql = `Delete * from posts where post_id = ($1)`;
+        const sql = `Delete from posts where post_id = ($1)`;
 
         const dbResult = await pool.query(sql,[post_id])
 

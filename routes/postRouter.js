@@ -1,5 +1,5 @@
 const router = require('express').Router();;
-const {fetchPost,createPost,getAllOfUsersPost,hashTagPost,deletePost, updatePostys} = require('../controller/postController')
+const {fetchPost,createPost,getAllOfUsersPost,hashTagPost,deletePost, updatePost} = require('../controller/postController')
 
 router.get('/posts', fetchPost);
 
@@ -9,7 +9,7 @@ router.get('/posts/:id', hashTagPost);
 
 router.post('/posts', createPost);
 
-router.patch('/posts/:id', updatePostys);
+router.patch('/posts/:id', updatePost);
 
 router.delete('/posts/:id', deletePost);
 

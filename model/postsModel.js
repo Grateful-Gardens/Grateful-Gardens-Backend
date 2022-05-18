@@ -2,7 +2,15 @@ const pool = require('../db')
 
 class PostsModel {
     static async getAllPosts() {
-        const sql = `SELECT * FROM posts`
+        const sql = `SELECT post_id, hashtag,image, description, time_posted, users.user_id, username FROM posts 
+        JOIN users ON posts.user_id = users.user_id order by time_posted desc`
+        // SELECT posts.post_id, hashtag,image, description, time_posted, users.user_id, username, my_like_count
+        // FROM posts 
+        // JOIN users 
+        // ON posts.user_id = users.user_id
+        // JOIN (SELECT post_id, COUNT(post_id) AS my_like_count FROM likes GROUP BY post_id)
+        // AS like_counter
+        // ON posts.post_id = like_counter.post_id
         const dbResult = await pool.query(sql);
         return dbResult.rows
     }
@@ -15,7 +23,7 @@ class PostsModel {
     }
 
     static async deleteAPost(post_id) {
-        if (!post_id) throw new Error(`NO post with the id of: ${post_id}`)
+        if (!post_id) throw new Error(`POST WITH ID:${post_id} DOES NOT EXIST`)
         const sql = `DELETE FROM posts WHERE post_id = ($1)`;
         const dbResult = await pool.query(sql, [post_id])
         return dbResult.rows[0]
@@ -23,12 +31,14 @@ class PostsModel {
 
     // Change to getBookmarkedPosts()
     static async getAllOfAUsersPost(post_id) {
+        if (!post_id) throw new Error(`POSTS WITH ID:${post_id} DO NOT EXIST`)
         const sql = `SELECT * FROM posts WHERE post_id = ($1)`;
         const dbResult = await pool.query(sql, [post_id])
         return dbResult.rows[0]
     }
 
     static async findSpecificPost(post_id) {
+        if (!post_id) throw new Error(`POST WITH ID:${post_id} DOES NOT EXIST`)
         const sql = `SELECT * FROM posts WHERE post_id = ($1)`;
         const dbResult = await pool.query(sql, [post_id])
         return dbResult.rows[0]
@@ -44,10 +54,6 @@ class PostsModel {
     //     const dbResult = await pool.query(sql, [post_id, description])
     //     return dbResult.rows
     // }
-
-
-
-
 }
 
 module.exports = PostsModel

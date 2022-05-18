@@ -8,11 +8,10 @@ exports.up = function (knex) {
         table.string('username').notNullable();
         table.string('password').notNullable();
         table.string('email').notNullable();
-        table.integer('zipcode').notNullable();
+        table.integer('zipcode')
         table.string('first_name').notNullable();
         table.string('last_name').notNullable();
         table.string('bio')
-        table.string('display_name').unique();
     })
 };
 

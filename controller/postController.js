@@ -24,7 +24,7 @@ async function createPost(req, res) {
     }
     if (!postData) {
         return res.status(400).json({
-            message: 'You have to enter text'
+            message: 'NO DATA IS BEING PROVIDED'
         })
     }
     try {
@@ -45,7 +45,7 @@ async function deleteAPost(req, res) {
 
     if (!data) {
         return res.status(404).json({
-            message: `Post with id ${post_id} doesn't exist!`
+            message: `POST WITH ID:${post_id} DOES NOT EXIST`
         })
     }
     try {
@@ -64,7 +64,7 @@ async function hashTagPost(req, res) {
 
     if (!hashtag) {
         res.status(400).json({
-            message: `No post with hashtag of ${hashtag}`
+            message: `NO POSTS WITH #${hashtag} EXIST`
         });
     }
     try {
@@ -86,7 +86,7 @@ async function updatePosts(req, res) {
 
     if (!post_id) {
         res.status(404).json({
-            message: `No post with id: ${post_id}`
+            message: `POST WITH ID:${post_id} DOES NOT EXIST`
         })
     }
     try {
@@ -106,7 +106,7 @@ async function getAllOfUsersPost(req, res) {
 
     if (!user_id) {
         res.status(404).json({
-            message: `User ${user_id} doesn't have any post to show`
+            message: `POSTS WITH ID:${user_id} DOES NOT EXIST`
         })
     }
     try {

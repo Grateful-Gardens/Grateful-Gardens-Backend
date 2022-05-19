@@ -54,6 +54,13 @@ class PostsModel {
     //     const dbResult = await pool.query(sql, [post_id, description])
     //     return dbResult.rows
     // }
+
+    static async getLikes(post_id) {
+        if (!post_id) throw new Error(`POST WITH ID:${post_id} DOES NOT EXIST`)
+        const sql = `SELECT COUNT(${post_id}) from likes`;
+        const dbResult = await pool.query(sql, [post_id])
+        return dbResult.rows[0]
+    }
 }
 
 module.exports = PostsModel

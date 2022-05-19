@@ -138,6 +138,49 @@ async function getLikesForAPost(req, res) {
   }
 }
 
+async function getComments(req, res) {
+  const post_id = req.params.id;
+  if (!post_id) {
+    res.status(404).json({
+      message: `POST WITH ID:${post_id} DOES NOT EXIST`,
+    });
+  }
+  try {
+    const data = await PostsModel.getComments(post_id);
+    res.status(200).json({
+      data,
+    });
+  } catch (error) {
+    res.status(404).json({
+      message: error.message,
+    });
+  }
+}
+
+async function postComment(req, res) {
+  const { comment_body, user_id, post_id } = req.body;
+  const postData = {
+    comment_body,
+    user_id,
+    post_id,
+  };
+  if (!postData) {
+    return res.status(400).json({
+      message: "NO DATA IS BEING PROVIDED",
+    });
+  }
+  try {
+    const postInfo = await PostsModel.postComment(postData);
+    res.status(201).json({
+      data: postInfo,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+}
+
 module.exports = {
   fetchPosts,
   createPost,
@@ -146,4 +189,6 @@ module.exports = {
   deleteAPost,
   getAllOfUsersPost,
   getLikesForAPost,
+  getComments,
+  postComment,
 };

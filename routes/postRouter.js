@@ -3,7 +3,6 @@ const {
   fetchPosts,
   createPost,
   getAllOfUsersPost,
-  hashTagPost,
   deleteAPost,
   updatePosts,
   getLikesForAPost,
@@ -14,8 +13,6 @@ const {
 router.get("/posts", fetchPosts);
 
 router.get("/posts/:id", getAllOfUsersPost);
-
-router.get("/posts/:id", hashTagPost);
 
 router.get("/posts/:id/comments", getComments);
 
@@ -28,5 +25,7 @@ router.patch("/posts/:id", updatePosts);
 router.delete("/posts/:id", deleteAPost);
 
 router.get("/posts/:id/likes", getLikesForAPost);
+
+// router.post('/users/:id/bookmarks')
 
 module.exports = router;

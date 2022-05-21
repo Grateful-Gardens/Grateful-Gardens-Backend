@@ -45,12 +45,12 @@ async function deleteAPost(req, res) {
 
   if (!data) {
     return res.status(404).json({
-      message: `POST WITH ID:${post_id} DOES NOT EXIST`,
+      message: `POST WITH ID: ${post_id} DOES NOT EXIST`,
     });
   }
   try {
     await PostsModel.deleteAPost(post_id);
-    return res.send(`Deleted ${post_id}`).status(204);
+    return res.send(`SUCCESSFULLY DELETED POST WITH ID: ${post_id}`).status(204);
   } catch (error) {
     res.status(404).json({
       message: error.message,

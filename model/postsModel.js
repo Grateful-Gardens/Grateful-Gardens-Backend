@@ -3,7 +3,7 @@ const pool = require("../db");
 class PostsModel {
   static async getAllPosts() {
     const sql = `SELECT post_id, hashtag,image, description, time_posted, users.user_id, username FROM posts 
-        JOIN users ON posts.user_id = users.user_id order by time_posted desc`;
+        JOIN users ON posts.user_id = users.user_id ORDER BY time_posted desc`;
     // SELECT posts.post_id, hashtag,image, description, time_posted, users.user_id, username, my_like_count
     // FROM posts
     // JOIN users
@@ -58,8 +58,8 @@ class PostsModel {
   static async getComments(post_id) {
     if (!post_id) throw new Error(`POST WITH ID:${post_id} DOES NOT EXIST`);
     const sql = `SELECT comments.*, users.username FROM comments 
-        JOIN users ON comments.user_id = users.user_id
-        WHERE post_id = $1`;
+    JOIN users ON comments.user_id = users.user_id
+    WHERE post_id = ($1) ORDER BY time_posted ASC`;
     const dbResult = await pool.query(sql, [post_id]);
     return dbResult.rows;
   }
@@ -69,6 +69,13 @@ class PostsModel {
     const sql = `INSERT INTO comments (comment_body, user_id, post_id) VALUES ($1, $2, $3) RETURNING *`;
     const dbResult = await pool.query(sql, [comment_body, user_id, post_id]);
     return dbResult.rows;
+  }
+
+  static async deleteComment(comment_id) {
+    if (!comment_id) throw new Error(`POST WITH ID:${comment_id} DOES NOT EXIST`);
+    const sql = `DELETE FROM posts WHERE comment_id = ($1)`;
+    const dbResult = await pool.query(sql, [comment_id]);
+    return dbResult.rows[0];
   }
 }
 

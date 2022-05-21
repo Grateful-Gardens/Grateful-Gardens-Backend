@@ -58,26 +58,6 @@ async function deleteAPost(req, res) {
   }
 }
 
-async function hashTagPost(req, res) {
-  const hashtag = req.params.id;
-
-  if (!hashtag) {
-    res.status(400).json({
-      message: `NO POSTS WITH #${hashtag} EXIST`,
-    });
-  }
-  try {
-    const data = await PostsModel.findPostByHashTag(hashtag);
-    res.status(200).json({
-      data,
-    });
-  } catch (error) {
-    res.status(404).json({
-      message: error.message,
-    });
-  }
-}
-
 async function updatePosts(req, res) {
   const post_id = req.params.id;
   const { description } = req.body;
@@ -181,14 +161,33 @@ async function postComment(req, res) {
   }
 }
 
+async function deleteComment(req, res) {
+  const comment_id = req.params.id;
+  // const data = await PostsModel.findSpecificPost(comment_id);
+
+  if (!comment_id) {
+    return res.status(404).json({
+      message: `POST WITH ID: ${post_id} DOES NOT EXIST`,
+    });
+  }
+  try {
+    await PostsModel.deleteComment(comment_id);
+    return res.send(`SUCCESSFULLY DELETED POST WITH ID: ${post_id}`).status(204);
+  } catch (error) {
+    res.status(404).json({
+      message: error.message,
+    });
+  }
+}
+
 module.exports = {
   fetchPosts,
   createPost,
   updatePosts,
-  hashTagPost,
   deleteAPost,
   getAllOfUsersPost,
   getLikesForAPost,
   getComments,
   postComment,
+  deleteComment
 };

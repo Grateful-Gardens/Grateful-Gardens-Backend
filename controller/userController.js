@@ -1,9 +1,8 @@
 const Users = require('../model/userModel');
 
-async function fetchUsers(req, res) {
+async function getUsers(req, res) {
     try {
-        const data = await Users.findAllUsers()
-
+        const data = await Users.getAllUsers()
         res.json({
             data
         })
@@ -14,22 +13,40 @@ async function fetchUsers(req, res) {
         })
     }
 }
+async function getUser(req, res) {
+    const user_id = req.params.id
+
+    if (!user_id) {
+        res.status(400).json({
+            message: `USER WITH ID: ${user_id} DOES NOT EXIST`
+        })
+    }
+    try {
+        const data = await Users.getUser(user_id)
+        res.status(200).json({
+            data
+        })
+    } catch (err) {
+        res.status(404).json({
+            message: err.message
+        })
+    }
+}
 
 async function createUser(req, res) {
+    const { username, password, email, first_name, last_name, bio } = req.body
     const userData = {
         username,
         password,
         email,
-        zipcode,
         first_name,
         last_name,
         bio,
-        display_name
     }
 
     if (!userData) {
         return res.status(400).json({
-            message: 'You have to enter text'
+            message: 'NO USER INFO PROVIDED'
         })
     }
     try {
@@ -46,18 +63,16 @@ async function createUser(req, res) {
 
 async function deleteUser(req, res) {
     const user_id = req.params.id
-
-    const data = await Users.getSpecificUser(user_id)
+    const data = await Users.getUser(user_id)
 
     if (!data) {
         res.status(404).json({
-            message: `Could not find user with id ${user_id}`
+            message: `USER WITH ID: ${user_id} DOES NOT EXIST`
         })
     }
-
     try {
-        await Users.removeUser(user_id)
-        return res.sendStatus(204)
+        await Users.deleteUser(user_id)
+        return res.send(`SUCCESSFULLY DELETED USER WITH ID: ${user_id}`).status(204);
     } catch (err) {
         res.status(404).json({
             message: err.message
@@ -65,16 +80,42 @@ async function deleteUser(req, res) {
     }
 }
 
-async function getUser(req, res) {
-    const username = req.params.id
+async function updateDescription(req, res) {
+    const user_id = Number(req.params.id)
+    const { description } = req.body
 
-    if (!username) {
+    const updatedDescription = {
+        user_id, 
+        description
+    }
+
+    if (!user_id) {
+        res.status(404).json({
+            message: `USER WITH ID: ${user_id} DOES NOT EXIST`
+        })
+    }
+    try {
+        const data = await Users.updateDescription(updatedDescription)
+        res.status(200).json({
+            data
+        })
+    } catch (err) {
+        res.status(404).json({
+            message: err.message
+        })
+    }
+}
+
+async function getBookmarks(req, res) {
+    const user_id = req.params.id
+
+    if (!user_id) {
         res.status(400).json({
-            message: "No user exits by that username"
+            message: `USER WITH ID: ${user_id} DOES NOT EXIST`
         })
     }
     try {
-        const data = await Users.getUserName(username)
+        const data = await Users.getBookmarks(user_id)
         res.status(200).json({
             data
         })
@@ -85,97 +126,39 @@ async function getUser(req, res) {
     }
 }
 
-async function updateUserName(req, res) {
-    const username = req.params.id
-    const { newUsername } = req.body
+// async function addBookmark(req, res) {
+//     const { username, password, email, first_name, last_name, bio } = req.body
+//     const userData = {
+//         username,
+//         password,
+//         email,
+//         first_name,
+//         last_name,
+//         bio,
+//     }
 
-    if (!username) {
-        res.status(404).json({
-            message: `No user by this username : ${username}`
-        })
-    }
-    try {
-        const data = await Users.updateUserName(username, newUsername)
-        res.status(200).json({
-            data
-        })
-    } catch (err) {
-        res.status(404).json({
-            message: err.message
-        })
-    }
-}
+//     if (!userData) {
+//         return res.status(400).json({
+//             message: 'NO USER INFO PROVIDED'
+//         })
+//     }
+//     try {
+//         const userInfo = await Users.addBookmark(userData)
+//         res.status(201).json({
+//             data: userInfo
+//         });
+//     } catch (err) {
+//         res.status(500).json({
+//             message: err.message
+//         });
+//     }
+// }
 
-async function updateBio(req, res) {
-    const username = req.params.id
-    const { bioData } = req.body
-
-    if (!username) {
-        res.status(404).json({
-            message: `No user by this username : ${username}`
-        })
-    }
-    try {
-        const data = await Users.updateBio(username, bioData)
-        res.status(200).json({
-            data
-        })
-    } catch (err) {
-        res.status(404).json({
-            message: err.message
-        })
-    }
-}
-
-async function updateFirstNameLastName(req, res) {
-    const username = req.params.id
-    const updatedName = { first_name, last_name } = req.body
-
-    if (!username) {
-        res.status(404).json({
-            message: `No user by this username : ${username}`
-        })
-    }
-    try {
-        const data = await Users.updateFirstNameLastName(username, updatedName)
-        res.status(200).json({
-            data
-        })
-    } catch (err) {
-        res.status(404).json({
-            message: err.message
-        })
-    }
-}
-
-
-async function updateDisplayName(req, res) {
-    const username = req.params.id
-    const { displayName } = req.body
-
-    if (!username) {
-        res.status(404).json({
-            message: `No user by this username : ${username}`
-        })
-    }
-    try {
-        const data = await Users.updateDisplayName(username, displayName)
-        res.status(200).json({
-            data
-        })
-    } catch (err) {
-        res.status(404).json({
-            message: err.message
-        })
-    }
-}
 module.exports = {
-    fetchUsers,
+    getUsers,
+    getUser,
     createUser,
     deleteUser,
-    updateUserName,
-    getUser,
-    updateBio,
-    updateFirstNameLastName,
-    updateDisplayName
+    updateDescription,
+    getBookmarks,
 };

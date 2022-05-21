@@ -1,23 +1,18 @@
 const router = require('express').Router();;
-const {fetchUsers,createUser,deleteUser,updateUserName,getUser,updateBio,updateFirstNameLastName,updateDisplayName} = require('../controller/userController')
+const { getUsers, createUser, deleteUser, getUser, updateDescription, getBookmarks } = require('../controller/userController')
 
+router.get('/users', getUsers);
 
-router.get('/')
-
-router.get('/users',fetchUsers);
-
-router.get('/users/:id',getUser);
+router.get('/users/:id', getUser);
 
 router.post('/users', createUser);
 
-router.patch('/users/:id',updateBio)
+router.delete('/users/:id', deleteUser)
 
-router.patch('/users/:id',updateUserName)
+router.put('/profile/:id', updateDescription)
 
-router.patch('/users/:id',updateFirstNameLastName)
+router.get('/users/:id/bookmarks', getBookmarks)
 
-router.patch('/users/:id',updateDisplayName)
 
-router.delete('/users/:id',deleteUser)
 
 module.exports = router;

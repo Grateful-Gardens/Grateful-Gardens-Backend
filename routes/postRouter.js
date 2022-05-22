@@ -4,8 +4,6 @@ const {
   createPost,
   getAllOfUsersPost,
   deleteAPost,
-  updatePosts,
-  getLikesForAPost,
   getComments, 
   postComment,
   deleteComment
@@ -19,17 +17,10 @@ router.get("/posts/:id/comments", getComments);
 
 router.post("/posts/:id/comments", postComment);
 
-router.delete("/posts/:id/comments", deleteComment)
+router.delete("/comments/:id", deleteComment)
 
 router.post("/posts", createPost);
 
-router.patch("/posts/:id", updatePosts);
-
 router.delete("/posts/:id", deleteAPost);
-
-router.get("/posts/:id/likes", getLikesForAPost);
-
-
-// router.post('/users/:id/bookmarks')
 
 module.exports = router;

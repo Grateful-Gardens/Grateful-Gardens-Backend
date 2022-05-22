@@ -2,7 +2,7 @@ const PostsModel = require("../model/postsModel");
 
 async function fetchPosts(req, res) {
   try {
-    const data = await PostsModel.getAllPosts();
+    const data = await PostsModel.getAllPostsFromDB();
     res.json({
       data,
     });
@@ -28,7 +28,7 @@ async function createPost(req, res) {
     });
   }
   try {
-    const postInfo = await PostsModel.createPost(postData);
+    const postInfo = await PostsModel.createPostFromDB(postData);
     res.status(201).json({
       data: postInfo,
     });
@@ -41,7 +41,7 @@ async function createPost(req, res) {
 
 async function deleteAPost(req, res) {
   const post_id = req.params.id;
-  const data = await PostsModel.findSpecificPost(post_id);
+  const data = await PostsModel.findSpecificPostFromDB(post_id);
 
   if (!data) {
     return res.status(404).json({
@@ -49,29 +49,8 @@ async function deleteAPost(req, res) {
     });
   }
   try {
-    await PostsModel.deleteAPost(post_id);
+    await PostsModel.deleteAPostFromDB(post_id);
     return res.send(`SUCCESSFULLY DELETED POST WITH ID: ${post_id}`).status(204);
-  } catch (error) {
-    res.status(404).json({
-      message: error.message,
-    });
-  }
-}
-
-async function updatePosts(req, res) {
-  const post_id = req.params.id;
-  const { description } = req.body;
-
-  if (!post_id) {
-    res.status(404).json({
-      message: `POST WITH ID:${post_id} DOES NOT EXIST`,
-    });
-  }
-  try {
-    const data = await PostsModel.updatePosts(post_id, description);
-    res.status(200).json({
-      data,
-    });
   } catch (error) {
     res.status(404).json({
       message: error.message,
@@ -88,26 +67,7 @@ async function getAllOfUsersPost(req, res) {
     });
   }
   try {
-    const data = await PostsModel.getAllOfAUsersPost(user_id);
-    res.status(200).json({
-      data,
-    });
-  } catch (error) {
-    res.status(404).json({
-      message: error.message,
-    });
-  }
-}
-
-async function getLikesForAPost(req, res) {
-  const post_id = req.params.id;
-  if (!post_id) {
-    res.status(404).json({
-      message: `POSTS WITH ID:${post_id} DOES NOT EXIST`,
-    });
-  }
-  try {
-    const data = await PostsModel.getLikesForAPost(post_id);
+    const data = await PostsModel.getAllOfAUsersPostFromDB(user_id);
     res.status(200).json({
       data,
     });
@@ -126,7 +86,7 @@ async function getComments(req, res) {
     });
   }
   try {
-    const data = await PostsModel.getComments(post_id);
+    const data = await PostsModel.getCommentsFromDB(post_id);
     res.status(200).json({
       data,
     });
@@ -139,6 +99,8 @@ async function getComments(req, res) {
 
 async function postComment(req, res) {
   const { comment_body, user_id, post_id } = req.body;
+  if (comment_body === '') return
+
   const postData = {
     comment_body,
     user_id,
@@ -150,7 +112,7 @@ async function postComment(req, res) {
     });
   }
   try {
-    const postInfo = await PostsModel.postComment(postData);
+    const postInfo = await PostsModel.postCommentFromDB(postData);
     res.status(201).json({
       data: postInfo,
     });
@@ -162,17 +124,18 @@ async function postComment(req, res) {
 }
 
 async function deleteComment(req, res) {
-  const comment_id = req.params.id;
-  // const data = await PostsModel.findSpecificPost(comment_id);
+  const comment_id = req.params.id
 
   if (!comment_id) {
     return res.status(404).json({
-      message: `POST WITH ID: ${post_id} DOES NOT EXIST`,
+      message: `COMMENT WITH ID: ${comment_id} DOES NOT EXIST`,
     });
   }
   try {
-    await PostsModel.deleteComment(comment_id);
-    return res.send(`SUCCESSFULLY DELETED POST WITH ID: ${post_id}`).status(204);
+    const deleteInfo = await PostsModel.deleteCommentFromDB(comment_id);
+    res.status(200).json({
+      deleteInfo,
+    })
   } catch (error) {
     res.status(404).json({
       message: error.message,
@@ -183,10 +146,8 @@ async function deleteComment(req, res) {
 module.exports = {
   fetchPosts,
   createPost,
-  updatePosts,
   deleteAPost,
   getAllOfUsersPost,
-  getLikesForAPost,
   getComments,
   postComment,
   deleteComment

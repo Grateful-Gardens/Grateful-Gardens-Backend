@@ -1,7 +1,7 @@
 const pool = require('../db')
 
 class Users {
-// ------------------------USERS------------------------ 
+    // ------------------------USERS------------------------ 
     static async getAllUsersFromDB() {
         const sql = `SELECT * FROM users`;
         const dbResult = await pool.query(sql);
@@ -44,10 +44,10 @@ class Users {
         return dbResult.rows
     }
 
-// ------------------------BOOKMARKS------------------------ 
+    // ------------------------BOOKMARKS------------------------ 
     static async getBookmarksFromDB(user_id) {
         if (!user_id) throw new Error(`USER WITH ID: ${user_id} DOES NOT EXIST`)
-        const sql = `SELECT * FROM bookmarks WHERE user_id = ($1)`;
+        const sql = `SELECT bookmarks.*, posts.*, username FROM bookmarks JOIN posts ON bookmarks.post_id = posts.post_id JOIN users ON posts.post_id = users.user_id WHERE bookmarks.user_id = ($1)`;
         const dbResult = await pool.query(sql, [user_id])
         return dbResult.rows
     }
@@ -66,7 +66,7 @@ class Users {
         return dbResult.rows[0]
     }
 
-// ------------------------FRIENDS------------------------ 
+    // ------------------------FRIENDS------------------------ 
     static async getAllFriendsFromDB(user_id) {
         const sql = `SELECT * FROM friendships WHERE friend_one = ($1) AND accepted = true`;
         const dbResult = await pool.query(sql, [user_id]);

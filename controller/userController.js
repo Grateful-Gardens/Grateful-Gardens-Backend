@@ -1,5 +1,6 @@
 const Users = require('../model/userModel');
 
+// ------------------------USERS------------------------ 
 async function getUsers(req, res) {
     try {
         const data = await Users.getAllUsersFromDB()
@@ -107,6 +108,7 @@ async function updateDescription(req, res) {
     }
 }
 
+// ------------------------BOOKMARKS------------------------ 
 async function getBookmarks(req, res) {
     const user_id = req.params.id
 
@@ -127,34 +129,49 @@ async function getBookmarks(req, res) {
     }
 }
 
-// async function addBookmark(req, res) {
-//     const { username, password, email, first_name, last_name, bio } = req.body
-//     const userData = {
-//         username,
-//         password,
-//         email,
-//         first_name,
-//         last_name,
-//         bio,
-//     }
+async function addBookmark(req, res) {
+    const { post_id  } = req.body
+    const user_id = req.params.id
 
-//     if (!userData) {
-//         return res.status(400).json({
-//             message: 'NO USER INFO PROVIDED'
-//         })
-//     }
-//     try {
-//         const userInfo = await Users.addBookmark(userData)
-//         res.status(201).json({
-//             data: userInfo
-//         });
-//     } catch (err) {
-//         res.status(500).json({
-//             message: err.message
-//         });
-//     }
-// }
+    if (!post_id) {
+        return res.status(400).json({
+            message: 'THIS POST DOES NOT EXIST'
+        })
+    }
+    try {
+        const userInfo = await Users.addBookmarkFromDB(post_id, user_id)
+        res.status(201).json({
+            data: userInfo
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: err.message
+        });
+    }
+}
 
+async function deleteBookmark(req, res) {
+    const user_id = req.params.id
+    const { post_id } = req.body
+
+    if (!post_id) {
+        res.status(404).json({
+            message: `USER WITH ID: ${user_id} DOES NOT EXIST`
+        })
+    }
+    try {
+       const deleteInfo = await Users.deleteBookmarkFromDB(user_id, post_id)
+       res.status(200).json({
+           deleteInfo
+       })
+    } catch (err) {
+        res.status(404).json({
+            message: err.message
+        })
+    }
+}
+
+// ------------------------FRIENDS------------------------ 
 async function getAllFriends(req, res) {
     const user_id = req.params.id
 
@@ -206,5 +223,7 @@ module.exports = {
     updateDescription,
     getBookmarks,
     getAllFriends,
-    unFriend
+    unFriend,
+    addBookmark,
+    deleteBookmark
 };

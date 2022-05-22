@@ -4,9 +4,10 @@
  */
 exports.up = function (knex) {
     return knex.schema.createTable('friendships', (table) => {
-        table.increments('friendship_id');
-        table.integer('friends_id').notNullable();
-        table.integer('user_id').notNullable().references('user_id').inTable('users')
+        table.increments('friendship_id').primary();
+        table.integer('friend_one').notNullable().references('user_id').inTable('users')
+        table.integer('friend_two').notNullable().references('user_id').inTable('users')
+        table.boolean('accepted').defaultTo(false)
     })
 };
 

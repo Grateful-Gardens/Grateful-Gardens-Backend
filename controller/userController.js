@@ -36,14 +36,13 @@ async function getUser(req, res) {
 }
 
 async function createUser(req, res) {
-    const { username, password, email, first_name, last_name, bio } = req.body
+    const { username, password, email, first_name, last_name } = req.body
     const userData = {
         username,
         password,
         email,
         first_name,
         last_name,
-        bio,
     }
 
     if (!userData) {
@@ -82,13 +81,16 @@ async function deleteUser(req, res) {
     }
 }
 
-async function updateDescription(req, res) {
-    const user_id = Number(req.params.id)
-    const { description } = req.body
-
-    const updatedDescription = {
+async function updateUserInfo(req, res) {
+    const user_id = req.params.id 
+    const { bio, city, country, longer_bio } = req.body
+    
+    const updateInfo = {
         user_id,
-        description
+        bio,
+        city, 
+        country, 
+        longer_bio
     }
 
     if (!user_id) {
@@ -97,7 +99,7 @@ async function updateDescription(req, res) {
         })
     }
     try {
-        const data = await Users.updateDescriptionFromDB(updatedDescription)
+        const data = await Users.updateUserInfoFromDB(updateInfo)
         return res.status(200).json({
             data
         })
@@ -268,7 +270,7 @@ module.exports = {
     getUser,
     createUser,
     deleteUser,
-    updateDescription,
+    updateUserInfo,
     getBookmarks,
     getAllFriends,
     unFriend,

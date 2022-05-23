@@ -15,15 +15,14 @@ class Users {
     }
 
     static async createUserFromDB(data) {
-        const { username, password, email, first_name, last_name, bio } = data
-        const sql = `INSERT INTO users (username, password, email, first_name, last_name, bio) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
+        const { username, password, email, first_name, last_name } = data
+        const sql = `INSERT INTO users (username, password, email, first_name, last_name) VALUES ($1, $2, $3, $4, $5) RETURNING *`;
         const dbResult = await pool.query(sql, [
             username,
             password,
             email,
             first_name,
             last_name,
-            bio
         ])
         return dbResult.rows
     }
@@ -35,11 +34,11 @@ class Users {
         return dbResult.rows[0]
     }
 
-    static async updateDescriptionFromDB(data) {
+    static async updateUserInfoFromDB(data) {
+        const { user_id, bio, city, country, longer_bio } = data
         if (!user_id) throw new Error(`USER WITH ID: ${user_id} DOES NOT EXIST`)
-        const { user_id, description } = data
-        const sql = `UPDATE users SET bio = ($1) WHERE user_id = ($2) RETURNING *`;
-        const dbResult = await pool.query(sql, [user_id, description])
+        const sql = `UPDATE users SET bio = ($2), city = ($3), country = ($4), longer_bio = ($5) WHERE user_id = ($1) RETURNING *`;
+        const dbResult = await pool.query(sql, [user_id, bio, city, country, longer_bio])
         return dbResult.rows
     }
 

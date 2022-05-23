@@ -10,9 +10,12 @@ exports.up = function (knex) {
         table.string('email').notNullable();
         table.string('first_name');
         table.string('last_name');
-        table.string('bio');
+        table.string('bio').defaultTo('Enter a short description')
         table.string('profile_pic');
         table.string('cover_pic');
+        table.string('city').defaultTo('What city are you from')
+        table.string('country').defaultTo('What country are you from')
+        table.string('longer_bio').defaultTo('Tell us more about yourself!')
     })
 };
 

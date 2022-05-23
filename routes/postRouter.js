@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const {
-  fetchPosts,
+  getAllPosts,
   createPost,
   getAllOfUsersPost,
   deleteAPost,
@@ -9,7 +9,7 @@ const {
   deleteComment
 } = require("../controller/postController");
 
-router.get("/posts", fetchPosts);
+router.get("/posts", getAllPosts);
 
 router.get("/posts/:id", getAllOfUsersPost);
 

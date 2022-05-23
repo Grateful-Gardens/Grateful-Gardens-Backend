@@ -1,6 +1,6 @@
 const PostsModel = require("../model/postsModel");
 
-async function fetchPosts(req, res) {
+async function getAllPosts(req, res) {
   try {
     const data = await PostsModel.getAllPostsFromDB();
     return res.json({
@@ -144,7 +144,7 @@ async function deleteComment(req, res) {
 }
 
 module.exports = {
-  fetchPosts,
+  getAllPosts,
   createPost,
   deleteAPost,
   getAllOfUsersPost,

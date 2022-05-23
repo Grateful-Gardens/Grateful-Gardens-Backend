@@ -34,11 +34,11 @@ class PostsModel {
     return dbResult.rows[0];
   }
 
-  static async getAllOfAUsersPostFromDB(post_id) {
-    if (!post_id) throw new Error(`POSTS WITH ID:${post_id} DO NOT EXIST`);
-    const sql = `SELECT * FROM posts WHERE post_id = ($1)`;
-    const dbResult = await pool.query(sql, [post_id]);
-    return dbResult.rows[0];
+  static async getAllOfAUsersPostFromDB(user_id) {
+    if (!user_id) throw new Error(`POSTS WITH ID:${user_id} DO NOT EXIST`);
+    const sql = `SELECT posts.*, username FROM posts JOIN users ON posts.user_id = users.user_id WHERE posts.user_id = ($1)`;
+    const dbResult = await pool.query(sql, [user_id]);
+    return dbResult.rows;
   }
 
   static async findSpecificPostFromDB(post_id) {

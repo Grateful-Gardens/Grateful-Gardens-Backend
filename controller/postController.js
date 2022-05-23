@@ -3,7 +3,7 @@ const PostsModel = require("../model/postsModel");
 async function fetchPosts(req, res) {
   try {
     const data = await PostsModel.getAllPostsFromDB();
-    res.json({
+    return res.json({
       data,
     });
   } catch (err) {
@@ -29,7 +29,7 @@ async function createPost(req, res) {
   }
   try {
     const postInfo = await PostsModel.createPostFromDB(postData);
-    res.status(201).json({
+    return res.status(201).json({
       data: postInfo,
     });
   } catch (error) {
@@ -62,13 +62,13 @@ async function getAllOfUsersPost(req, res) {
   const user_id = req.params.id;
 
   if (!user_id) {
-    res.status(404).json({
+    return res.status(404).json({
       message: `POSTS WITH ID:${user_id} DOES NOT EXIST`,
     });
   }
   try {
     const data = await PostsModel.getAllOfAUsersPostFromDB(user_id);
-    res.status(200).json({
+    return res.status(200).json({
       data,
     });
   } catch (error) {
@@ -81,13 +81,13 @@ async function getAllOfUsersPost(req, res) {
 async function getComments(req, res) {
   const post_id = req.params.id;
   if (!post_id) {
-    res.status(404).json({
+    return res.status(404).json({
       message: `POST WITH ID:${post_id} DOES NOT EXIST`,
     });
   }
   try {
     const data = await PostsModel.getCommentsFromDB(post_id);
-    res.status(200).json({
+    return res.status(200).json({
       data,
     });
   } catch (error) {
@@ -113,7 +113,7 @@ async function postComment(req, res) {
   }
   try {
     const postInfo = await PostsModel.postCommentFromDB(postData);
-    res.status(201).json({
+    return res.status(201).json({
       data: postInfo,
     });
   } catch (error) {
@@ -133,7 +133,7 @@ async function deleteComment(req, res) {
   }
   try {
     const deleteInfo = await PostsModel.deleteCommentFromDB(comment_id);
-    res.status(200).json({
+    return res.status(200).json({
       deleteInfo,
     })
   } catch (error) {

@@ -16,8 +16,7 @@ class Users {
 
     static async createUserFromDB(data) {
         const { username, password, email, first_name, last_name, bio } = data
-        const sql = `INSERT INTO users (username, password, email, first_name, last_name, bio) 
-        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
+        const sql = `INSERT INTO users (username, password, email, first_name, last_name, bio) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
         const dbResult = await pool.query(sql, [
             username,
             password,
@@ -68,18 +67,37 @@ class Users {
 
     // ------------------------FRIENDS------------------------ 
     static async getAllFriendsFromDB(user_id) {
-        const sql = `SELECT * FROM friendships WHERE friend_one = ($1) AND accepted = true`;
+        const sql = `SELECT users.*, accepted, friend_two FROM friendships JOIN users ON friendships.friend_two = users.user_id WHERE friend_one = ($1)`;
+        const dbResult = await pool.query(sql, [user_id]);
+        return dbResult.rows
+    }
+
+    static async getAllFriendsFromDBTwo(user_id) {
+        const sql = `SELECT users.*, accepted, friend_two FROM friendships JOIN users ON friendships.friend_one = users.user_id WHERE friend_two = ($1)`;
         const dbResult = await pool.query(sql, [user_id]);
         return dbResult.rows
     }
 
     static async unFriendFromDB(data) {
-        console.log(data)
-        const { user_id, friend_id } = data
-        if (!friend_id) throw new Error(`FRIENDSHIP WITH ID: ${friend_id} DOES NOT EXIST`)
+        const { user_id, friend_two } = data
+        if (!friend_two) throw new Error(`FRIENDSHIP WITH ID: ${friend_two} DOES NOT EXIST`)
         const sql = `DELETE FROM friendships WHERE friend_one = ($1) AND friend_two = ($2) OR friend_two = ($1) AND friend_one = ($2) RETURNING *`;
-        const dbResult = await pool.query(sql, [user_id, friend_id])
+        const dbResult = await pool.query(sql, [user_id, friend_two])
         return dbResult.rows[0]
+    }
+
+    static async sendFriendRequestFromDB(data) {
+        const { user_id, friend_two } = data
+        const sql = `INSERT INTO friendships (friend_one, friend_two) VALUES ($1, $2) RETURNING *`;
+        const dbResult = await pool.query(sql, [user_id, friend_two])
+        return dbResult.rows
+    }
+
+    static async acceptFriendRequestFromDB(data) {
+        const { user_id, friend_two } = data
+        const sql = `UPDATE friendships SET accepted = true WHERE friend_one = ($1) AND friend_two = ($2) OR friend_one = ($2) AND friend_two = ($1) RETURNING *`;
+        const dbResult = await pool.query(sql, [user_id, friend_two])
+        return dbResult.rows
     }
 }
 

@@ -2,15 +2,9 @@ const pool = require("../db");
 
 class PostsModel {
   static async getAllPostsFromDB() {
-    const sql = `SELECT post_id, hashtag,image, description, time_posted, users.user_id, username FROM posts 
-        JOIN users ON posts.user_id = users.user_id ORDER BY time_posted desc`;
-    // SELECT posts.post_id, hashtag,image, description, time_posted, users.user_id, username, my_like_count
-    // FROM posts
-    // JOIN users
-    // ON posts.user_id = users.user_id
-    // JOIN (SELECT post_id, COUNT(post_id) AS my_like_count FROM likes GROUP BY post_id)
-    // AS like_counter
-    // ON posts.post_id = like_counter.post_id
+    const sql = `SELECT posts.*, users.profile_pic, users.username, COUNT(comments) AS comment_count, COUNT(likes) AS like_count FROM posts LEFT JOIN comments ON posts.post_id = comments.post_id
+    LEFT JOIN likes ON posts.post_id = likes.post_id JOIN users ON posts.user_id = users.user_id
+    GROUP BY posts.post_id, users.profile_pic, users.username ORDER BY posts.time_posted DESC`;
     const dbResult = await pool.query(sql);
     return dbResult.rows;
   }
@@ -29,14 +23,18 @@ class PostsModel {
 
   static async deleteAPostFromDB(post_id) {
     if (!post_id) throw new Error(`POST WITH ID:${post_id} DOES NOT EXIST`);
-    const sql = `DELETE FROM posts WHERE post_id = ($1)`;
-    const dbResult = await pool.query(sql, [post_id]);
-    return dbResult.rows[0];
+    // Delete all comments where post is being referenced
+    await pool.query(`DELETE FROM comments WHERE comments.post_id = ($1)`, [post_id]);
+    // Delete actual post
+    await pool.query(`DELETE FROM posts WHERE post_id = ($1)`, [post_id]);
   }
 
   static async getAllOfAUsersPostFromDB(user_id) {
     if (!user_id) throw new Error(`POSTS WITH ID:${user_id} DO NOT EXIST`);
-    const sql = `SELECT posts.*, username FROM posts JOIN users ON posts.user_id = users.user_id WHERE posts.user_id = ($1)`;
+    const sql = `SELECT posts.*, users.profile_pic, users.username, COUNT(comments) AS comment_count, COUNT(likes) AS like_count FROM posts 
+    LEFT JOIN comments ON posts.post_id = comments.post_id
+    LEFT JOIN likes ON posts.post_id = likes.post_id JOIN users ON posts.user_id = users.user_id WHERE posts.user_id = ($1)
+    GROUP BY posts.post_id, users.profile_pic, users.username  ORDER BY posts.time_posted DESC`;
     const dbResult = await pool.query(sql, [user_id]);
     return dbResult.rows;
   }
@@ -68,6 +66,21 @@ class PostsModel {
     if (!comment_id) throw new Error(`POST WITH ID: ${comment_id} DOES NOT EXIST`);
     const sql = `DELETE FROM comments WHERE comment_id = ($1)`;
     const dbResult = await pool.query(sql, [comment_id]);
+    return dbResult.rows[0];
+  }
+
+  static async addLikeFromDB(data) {
+    const { post_id, user_id } = data;
+    const sql = `INSERT INTO likes (post_id, user_id) VALUES ($1, $2) RETURNING *`;
+    const dbResult = await pool.query(sql, [post_id, user_id]);
+    return dbResult.rows;
+  }
+
+  static async deleteLikeFromDB(data) {
+    const { post_id, user_id } = data
+    if (!post_id) throw new Error(`POST WITH ID: ${post_id} DOES NOT EXIST`);
+    const sql = `DELETE FROM likes WHERE post_id = ($1) AND user_id = ($2)`;
+    const dbResult = await pool.query(sql, [post_id, user_id]);
     return dbResult.rows[0];
   }
 }

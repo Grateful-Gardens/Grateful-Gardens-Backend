@@ -143,6 +143,57 @@ async function deleteComment(req, res) {
   }
 }
 
+async function addLike(req, res) {
+  const user_id = req.params.id;
+  const { post_id } = req.body;
+  const likeData = {
+    user_id,
+    post_id
+  };
+  if (!likeData) {
+    return res.status(400).json({
+      message: "NO DATA IS BEING PROVIDED",
+    });
+  }
+  try {
+    const likeInfo = await PostsModel.addLikeFromDB(likeData);
+    return res.status(201).json({
+      data: likeInfo,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+}
+
+async function deleteLike(req, res) {
+  const user_id = req.params.id
+  const { post_id } = req.body
+
+  const deleteInfo = {
+    post_id,
+    user_id
+  }
+
+  if (!deleteInfo) {
+    return res.status(404).json({
+      message: `Like WITH ID: ${deleteInfo} DOES NOT EXIST`,
+    });
+  }
+  try {
+    const data = await PostsModel.deleteLikeFromDB(deleteInfo);
+    return res.status(200).json({
+      data,
+    })
+  } catch (error) {
+    res.status(404).json({
+      message: error.message,
+    });
+  }
+}
+
+
 module.exports = {
   getAllPosts,
   createPost,
@@ -150,5 +201,7 @@ module.exports = {
   getAllOfUsersPost,
   getComments,
   postComment,
-  deleteComment
+  deleteComment,
+  addLike,
+  deleteLike
 };

@@ -48,7 +48,7 @@ class PostsModel {
 
   static async getCommentsFromDB(post_id) {
     if (!post_id) throw new Error(`POST WITH ID:${post_id} DOES NOT EXIST`);
-    const sql = `SELECT comments.*, users.username FROM comments 
+    const sql = `SELECT comments.*, users.username, users.profile_pic FROM comments 
     JOIN users ON comments.user_id = users.user_id
     WHERE post_id = ($1) ORDER BY time_posted ASC`;
     const dbResult = await pool.query(sql, [post_id]);

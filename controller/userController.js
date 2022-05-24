@@ -1,4 +1,8 @@
 const Users = require('../model/userModel');
+const bcrypt = require('bcrypt')
+const { generateToken } = require('../utils')
+const saltRounds = 10
+const pool = require('../db')
 
 // ------------------------USERS------------------------ 
 async function getUsers(req, res) {
@@ -37,9 +41,10 @@ async function getUser(req, res) {
 
 async function createUser(req, res) {
     const { username, password, email, first_name, last_name } = req.body
+    const hashedPassword = await bcrypt.hash(password, saltRounds)
     const userData = {
         username,
-        password,
+        hashedPassword,
         email,
         first_name,
         last_name,
@@ -52,8 +57,10 @@ async function createUser(req, res) {
     }
     try {
         const userInfo = await Users.createUserFromDB(userData)
+        const token = await generateToken(userInfo.user_id)
         return res.status(201).json({
-            data: userInfo
+            userInfo,
+            token
         });
     } catch (err) {
         res.status(500).json({
@@ -82,14 +89,14 @@ async function deleteUser(req, res) {
 }
 
 async function updateUserInfo(req, res) {
-    const user_id = req.params.id 
+    const user_id = req.params.id
     const { bio, city, country, longer_bio } = req.body
-    
+
     const updateInfo = {
         user_id,
         bio,
-        city, 
-        country, 
+        city,
+        country,
         longer_bio
     }
 
@@ -210,7 +217,7 @@ async function unFriend(req, res) {
         })
     }
     try {
-        const data = await Users.unFriendFromDB({user_id, friend_two});
+        const data = await Users.unFriendFromDB({ user_id, friend_two });
         return res.status(200).json({
             data,
         })
@@ -224,14 +231,14 @@ async function unFriend(req, res) {
 async function sendFriendRequest(req, res) {
     const user_id = req.params.id
     const { friend_two } = req.body
-    
+
     if (!user_id) {
         return res.status(400).json({
             message: 'NO USER INFO PROVIDED'
         })
     }
     try {
-        const userInfo = await Users.sendFriendRequestFromDB({user_id, friend_two})
+        const userInfo = await Users.sendFriendRequestFromDB({ user_id, friend_two })
         return res.status(201).json({
             data: userInfo
         });
@@ -252,7 +259,7 @@ async function acceptFriendRequest(req, res) {
         })
     }
     try {
-        const userInfo = await Users.acceptFriendRequestFromDB({user_id, friend_two})
+        const userInfo = await Users.acceptFriendRequestFromDB({ user_id, friend_two })
         return res.status(201).json({
             data: userInfo
         });
@@ -260,6 +267,40 @@ async function acceptFriendRequest(req, res) {
         res.status(500).json({
             message: err.message
         });
+    }
+}
+
+async function login(req, res) {
+    try {
+        const { email, password } = req.body;
+
+        const user = await (
+            await pool.query("select * from users where email = ($1)", [email])
+        ).rows[0];
+
+        if (!user) {
+            return res.status(401).json({
+                message: "You sure you have the right email?",
+            });
+        }
+
+        const passwordCorrect = await bcrypt.compare(password, user.password);
+        if (!passwordCorrect) {
+            return res.status(401).json({
+                message: "You sure you have the right password?",
+            });
+        }
+        const token = await generateToken(user.user_id);
+
+        return res.status(200).json({
+            user,
+            token
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            message: err.message
+        })
     }
 }
 
@@ -277,5 +318,6 @@ module.exports = {
     addBookmark,
     deleteBookmark,
     sendFriendRequest,
-    acceptFriendRequest
+    acceptFriendRequest,
+    login
 };

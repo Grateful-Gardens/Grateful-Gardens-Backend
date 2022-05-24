@@ -118,67 +118,67 @@ async function updateUserInfo(req, res) {
 }
 
 // ------------------------BOOKMARKS------------------------ 
-async function getBookmarks(req, res) {
-    const user_id = req.params.id
+// async function getBookmarks(req, res) {
+//     const user_id = req.params.id
 
-    if (!user_id) {
-        return res.status(400).json({
-            message: `USER WITH ID: ${user_id} DOES NOT EXIST`
-        })
-    }
-    try {
-        const data = await Users.getBookmarksFromDB(user_id)
-        return res.status(200).json({
-            data
-        })
-    } catch (err) {
-        res.status(404).json({
-            message: err.message
-        })
-    }
-}
+//     if (!user_id) {
+//         return res.status(400).json({
+//             message: `USER WITH ID: ${user_id} DOES NOT EXIST`
+//         })
+//     }
+//     try {
+//         const data = await Users.getBookmarksFromDB(user_id)
+//         return res.status(200).json({
+//             data
+//         })
+//     } catch (err) {
+//         res.status(404).json({
+//             message: err.message
+//         })
+//     }
+// }
 
-async function addBookmark(req, res) {
-    const { post_id } = req.body
-    const user_id = req.params.id
+// async function addBookmark(req, res) {
+//     const { post_id } = req.body
+//     const user_id = req.params.id
 
-    if (!post_id) {
-        return res.status(400).json({
-            message: 'THIS POST DOES NOT EXIST'
-        })
-    }
-    try {
-        const userInfo = await Users.addBookmarkFromDB(post_id, user_id)
-        return res.status(201).json({
-            data: userInfo
-        });
-    } catch (err) {
-        res.status(500).json({
-            message: err.message
-        });
-    }
-}
+//     if (!post_id) {
+//         return res.status(400).json({
+//             message: 'THIS POST DOES NOT EXIST'
+//         })
+//     }
+//     try {
+//         const userInfo = await Users.addBookmarkFromDB(post_id, user_id)
+//         return res.status(201).json({
+//             data: userInfo
+//         });
+//     } catch (err) {
+//         res.status(500).json({
+//             message: err.message
+//         });
+//     }
+// }
 
-async function deleteBookmark(req, res) {
-    const user_id = req.params.id
-    const { post_id } = req.body
+// async function deleteBookmark(req, res) {
+//     const user_id = req.params.id
+//     const { post_id } = req.body
 
-    if (!post_id) {
-        return res.status(404).json({
-            message: `USER WITH ID: ${user_id} DOES NOT EXIST`
-        })
-    }
-    try {
-        const deleteInfo = await Users.deleteBookmarkFromDB(user_id, post_id)
-        return res.status(200).json({
-            deleteInfo
-        })
-    } catch (err) {
-        res.status(404).json({
-            message: err.message
-        })
-    }
-}
+//     if (!post_id) {
+//         return res.status(404).json({
+//             message: `USER WITH ID: ${user_id} DOES NOT EXIST`
+//         })
+//     }
+//     try {
+//         const deleteInfo = await Users.deleteBookmarkFromDB(user_id, post_id)
+//         return res.status(200).json({
+//             deleteInfo
+//         })
+//     } catch (err) {
+//         res.status(404).json({
+//             message: err.message
+//         })
+//     }
+// }
 
 // ------------------------FRIENDS------------------------ 
 async function getAllFriends(req, res) {
@@ -312,11 +312,11 @@ module.exports = {
     createUser,
     deleteUser,
     updateUserInfo,
-    getBookmarks,
+    // getBookmarks,
     getAllFriends,
     unFriend,
-    addBookmark,
-    deleteBookmark,
+    // addBookmark,
+    // deleteBookmark,
     sendFriendRequest,
     acceptFriendRequest,
     login

@@ -15,11 +15,11 @@ router.delete('/users/:id', deleteUser)
 router.put('/profile/:id', updateUserInfo)
 
 // ------------------------BOOKMARKS------------------------ 
-router.get('/users/:id/bookmarks', getBookmarks)
+// router.get('/users/:id/bookmarks', getBookmarks)
 
-router.post('/users/:id/bookmarks', addBookmark)
+// router.post('/users/:id/bookmarks', addBookmark)
 
-router.delete('/users/:id/bookmarks', deleteBookmark)
+// router.delete('/users/:id/bookmarks', deleteBookmark)
 
 // ------------------------FRIENDS------------------------ 
 router.get('/users/:id/friends', getAllFriends)

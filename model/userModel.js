@@ -15,16 +15,16 @@ class Users {
     }
 
     static async createUserFromDB(data) {
-        const { username, password, email, first_name, last_name } = data
+        const { username, hashedPassword, email, first_name, last_name } = data
         const sql = `INSERT INTO users (username, password, email, first_name, last_name) VALUES ($1, $2, $3, $4, $5) RETURNING *`;
-        const dbResult = await pool.query(sql, [
+        const user = await pool.query(sql, [
             username,
-            password,
+            hashedPassword,
             email,
             first_name,
             last_name,
         ])
-        return dbResult.rows
+        return user.rows
     }
 
     static async deleteUserFromDB(user_id) {

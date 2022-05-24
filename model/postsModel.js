@@ -26,6 +26,8 @@ class PostsModel {
     // Delete all comments where post is being referenced
     await pool.query(`DELETE FROM comments WHERE comments.post_id = ($1)`, [post_id]);
     // Delete actual post
+    await pool.query(`DELETE FROM bookmarks WHERE bookmarks.post_id = ($1)`, [post_id])
+    await pool.query(`DELETE FROM likes WHERE likes.post_id = ($1)`, [post_id]);
     await pool.query(`DELETE FROM posts WHERE post_id = ($1)`, [post_id]);
   }
 

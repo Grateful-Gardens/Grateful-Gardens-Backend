@@ -43,26 +43,26 @@ class Users {
     }
 
     // ------------------------BOOKMARKS------------------------ 
-    static async getBookmarksFromDB(user_id) {
-        if (!user_id) throw new Error(`USER WITH ID: ${user_id} DOES NOT EXIST`)
-        const sql = `SELECT bookmarks.*, posts.*, username FROM bookmarks JOIN posts ON bookmarks.post_id = posts.post_id JOIN users ON posts.post_id = users.user_id WHERE bookmarks.user_id = ($1)`;
-        const dbResult = await pool.query(sql, [user_id])
-        return dbResult.rows
-    }
+    // static async getBookmarksFromDB(user_id) {
+    //     if (!user_id) throw new Error(`USER WITH ID: ${user_id} DOES NOT EXIST`)
+    //     const sql = `SELECT bookmarks.*, posts.*, username FROM bookmarks JOIN posts ON bookmarks.post_id = posts.post_id JOIN users ON posts.post_id = users.user_id WHERE bookmarks.user_id = ($1)`;
+    //     const dbResult = await pool.query(sql, [user_id])
+    //     return dbResult.rows
+    // }
 
-    static async addBookmarkFromDB(post_id, user_id) {
-        if (!post_id) throw new Error(`USER WITH ID: ${post_id} DOES NOT EXIST`)
-        const sql = `INSERT INTO bookmarks (post_id, user_id) VALUES ($1, $2)`;
-        const dbResult = await pool.query(sql, [post_id, user_id])
-        return dbResult.rows
-    }
+    // static async addBookmarkFromDB(post_id, user_id) {
+    //     if (!post_id) throw new Error(`USER WITH ID: ${post_id} DOES NOT EXIST`)
+    //     const sql = `INSERT INTO bookmarks (post_id, user_id) VALUES ($1, $2)`;
+    //     const dbResult = await pool.query(sql, [post_id, user_id])
+    //     return dbResult.rows
+    // }
 
-    static async deleteBookmarkFromDB(user_id, post_id) {
-        if (!post_id) throw new Error(`USER WITH ID: ${post_id} DOES NOT EXIST`)
-        const sql = `DELETE FROM bookmarks WHERE user_id = ($1) AND post_id = ($2)`;
-        const dbResult = await pool.query(sql, [user_id, post_id])
-        return dbResult.rows[0]
-    }
+    // static async deleteBookmarkFromDB(user_id, post_id) {
+    //     if (!post_id) throw new Error(`USER WITH ID: ${post_id} DOES NOT EXIST`)
+    //     const sql = `DELETE FROM bookmarks WHERE user_id = ($1) AND post_id = ($2)`;
+    //     const dbResult = await pool.query(sql, [user_id, post_id])
+    //     return dbResult.rows[0]
+    // }
 
     // ------------------------FRIENDS------------------------ 
     static async getAllFriendsFromDB(user_id) {

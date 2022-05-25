@@ -7,6 +7,7 @@ exports.up = function (knex) {
         table.increments('post_id').primary()
         table.string('hashtag')
         table.string('image')
+        table.binary('upload')
         table.string('description')
         table.timestamp('time_posted').defaultTo(knex.fn.now())
         table.integer('user_id').notNullable().references('user_id').inTable('users')

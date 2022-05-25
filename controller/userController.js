@@ -274,9 +274,7 @@ async function login(req, res) {
     try {
         const { email, password } = req.body;
 
-        const user = await (
-            await pool.query("select * from users where email = ($1)", [email])
-        ).rows[0];
+        const user = await (await pool.query("SELECT * FROM users WHERE email = ($1)", [email])).rows[0];
 
         if (!user) {
             return res.status(401).json({

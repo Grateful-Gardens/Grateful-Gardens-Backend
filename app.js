@@ -1,6 +1,7 @@
 require('dotenv').config()
 const postRouter = require('./routes/postRouter')
 const userRouter = require('./routes/userRouter')
+const chatRouter = require('./routes/chatRouter')
 
 const express = require('express');
 
@@ -16,6 +17,7 @@ app.use(cors())
 
 app.use(postRouter);
 app.use(userRouter);
+app.use(chatRouter)
 
 
 app.listen(PORT, () => {

@@ -1,5 +1,5 @@
 const router = require('express').Router();;
-const { getUsers, createUser, deleteUser, getUser, updateUserInfo, getBookmarks, getAllFriends, unFriend, addBookmark, deleteBookmark, sendFriendRequest, acceptFriendRequest, login } = require('../controller/userController')
+const { getUsers, createUser, deleteUser, getUser, updateUserInfo, getBookmarks, getAllFriends, unFriend, addBookmark, deleteBookmark, sendFriendRequest, acceptFriendRequest, login, getProfile } = require('../controller/userController')
 
 // ------------------------USERS------------------------ 
 router.get('/users', getUsers);
@@ -13,6 +13,8 @@ router.post('/login', login)
 router.delete('/users/:id', deleteUser)
 
 router.put('/profile/:id', updateUserInfo)
+
+router.get('/profile/:id', getProfile)
 
 // ------------------------BOOKMARKS------------------------ 
 // router.get('/users/:id/bookmarks', getBookmarks)

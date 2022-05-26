@@ -7,7 +7,6 @@ exports.up = function (knex) {
         table.increments('friendship_id').primary();
         table.integer('friend_one').notNullable().references('user_id').inTable('users')
         table.integer('friend_two').notNullable().references('user_id').inTable('users')
-        table.boolean('accepted').defaultTo(false)
     })
 };
 

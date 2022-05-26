@@ -205,20 +205,14 @@ async function getAllFriends(req, res) {
     const user_id = req.params.id
 
     try {
-        const friends = (await Users.getAllFriendsFromDB(user_id)).map(
-            (friend) => ({
-                ...friend,
-                requested: false,
-            })
-        )
-
-        const friendsTwo = (await Users.getAllFriendsFromDBTwo(user_id)).map(
-            (friend) => ({
-                ...friend,
-                requested: true,
-            })
-        )
-        return res.status(201).json([...friends, ...friendsTwo])
+        const friends = await Users.getAllFriendsFromDB(user_id)
+        // const friendsTwo = (await Users.getAllFriendsFromDBTwo(user_id)).map(
+        //     (friend) => ({
+        //         ...friend,
+        //         requested: true,
+        //     })
+        // )
+        return res.status(201).json([...friends])
     } catch (error) {
         res.statusCode = 200;
         res.json({
@@ -228,16 +222,15 @@ async function getAllFriends(req, res) {
 }
 
 async function unFriend(req, res) {
-    const user_id = req.params.id
-    const { friend_two } = req.body
+  const { user_id, friend_two } = req.body
 
     if (!friend_two) {
         return res.status(404).json({
-            message: `FRIENDSHIP WITH ID: ${friend_two} DOES NOT EXIST`
+            message: `FRIEND WITH ID: ${friend_two} DOES NOT EXIST`
         })
     }
     try {
-        const data = await Users.unFriendFromDB({ user_id, friend_two });
+        const data = await Users.unFriendFromDB(user_id, friend_two);
         return res.status(200).json({
             data,
         })
@@ -248,47 +241,67 @@ async function unFriend(req, res) {
     }
 }
 
-async function sendFriendRequest(req, res) {
-    const user_id = req.params.id
-    const { friend_two } = req.body
+async function addFriend(req, res) {
+  const { user_id, friend_two } = req.body
 
-    if (!user_id) {
-        return res.status(400).json({
-            message: 'NO USER INFO PROVIDED'
-        })
-    }
-    try {
-        const userInfo = await Users.sendFriendRequestFromDB({ user_id, friend_two })
-        return res.status(201).json({
-            data: userInfo
-        });
-    } catch (err) {
-        res.status(500).json({
-            message: err.message
-        });
-    }
+  if (!friend_two) {
+      return res.status(404).json({
+          message: `FRIEND WITH ID: ${friend_two} DOES NOT EXIST`
+      })
+  }
+  try {
+      const data = await Users.addFriendFromDB(user_id, friend_two);
+      return res.status(200).json({
+          data,
+      })
+  } catch (err) {
+      res.status(404).json({
+          message: err.message
+      })
+  }
 }
 
-async function acceptFriendRequest(req, res) {
-    const user_id = req.params.id
-    const { friend_two } = req.body
+// async function sendFriendRequest(req, res) {
+//     const user_id = req.params.id
+//     const { friend_two } = req.body
 
-    if (!user_id) {
-        return res.status(400).json({
-            message: 'NO USER INFO PROVIDED'
-        })
-    }
-    try {
-        const userInfo = await Users.acceptFriendRequestFromDB({ user_id, friend_two })
-        return res.status(201).json({
-            data: userInfo
-        });
-    } catch (err) {
-        res.status(500).json({
-            message: err.message
-        });
-    }
-}
+//     if (!user_id) {
+//         return res.status(400).json({
+//             message: 'NO USER INFO PROVIDED'
+//         })
+//     }
+//     try {
+//         const userInfo = await Users.sendFriendRequestFromDB({ user_id, friend_two })
+//         return res.status(201).json({
+//             data: userInfo
+//         });
+//     } catch (err) {
+//         res.status(500).json({
+//             message: err.message
+//         });
+//     }
+// }
+
+// async function acceptFriendRequest(req, res) {
+//     const user_id = req.params.id
+//     const { friend_two } = req.body
+
+//     if (!user_id) {
+//         return res.status(400).json({
+//             message: 'NO USER INFO PROVIDED'
+//         })
+//     }
+//     try {
+//         const userInfo = await Users.acceptFriendRequestFromDB({ user_id, friend_two })
+//         return res.status(201).json({
+//             data: userInfo
+//         });
+//     } catch (err) {
+//         res.status(500).json({
+//             message: err.message
+//         });
+//     }
+// }
 
 async function login(req, res) {
     try {
@@ -335,8 +348,7 @@ module.exports = {
     unFriend,
     // addBookmark,
     // deleteBookmark,
-    sendFriendRequest,
-    acceptFriendRequest,
+    addFriend,
     login,
     getProfile
 };

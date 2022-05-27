@@ -15,12 +15,13 @@ async function getAllPosts(req, res) {
 }
 
 async function createPost(req, res) {
-  const { hashtag, image, description, user_id } = req.body;
+  const { hashtag, image, description, user_id, upload } = req.body;
   const postData = {
     hashtag,
     image,
     description,
     user_id,
+    upload
   };
   if (!postData) {
     return res.status(400).json({

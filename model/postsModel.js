@@ -2,7 +2,7 @@ const pool = require("../db");
 
 class PostsModel {
   static async getAllPostsFromDB() {
-    const sql = `SELECT posts.*, users.profile_pic, users.username, COUNT(comments) AS comment_count, COUNT(likes) AS like_count FROM posts LEFT JOIN comments ON posts.post_id = comments.post_id
+    const sql = `SELECT posts.*, users.profile_pic, users.username, COUNT(DISTINCT (comments.post_id)) AS comment_count, COUNT(likes) AS like_count FROM posts LEFT JOIN comments ON posts.post_id = comments.post_id
     LEFT JOIN likes ON posts.post_id = likes.post_id JOIN users ON posts.user_id = users.user_id
     GROUP BY posts.post_id, users.profile_pic, users.username ORDER BY posts.time_posted DESC`;
     const dbResult = await pool.query(sql);
@@ -10,13 +10,14 @@ class PostsModel {
   }
 
   static async createPostFromDB(data) {
-    const { hashtag, image, description, user_id } = data;
-    const sql = `INSERT INTO posts (hashtag, image, description, user_id) VALUES ($1, $2, $3, $4) RETURNING *`;
+    const { hashtag, image, description, user_id, upload} = data;
+    const sql = `INSERT INTO posts (hashtag, image, description, user_id, upload) VALUES ($1, $2, $3, $4, $5) RETURNING *`;
     const dbResult = await pool.query(sql, [
       hashtag,
       image,
       description,
       user_id,
+      upload
     ]);
     return dbResult.rows;
   }
